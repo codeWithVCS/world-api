@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -45,8 +46,8 @@ public class WorldServiceImpl implements WorldService {
     public CountryResponseDto getCountryByCode(String code) {
         Country country = countryRepository.findByCodeWithDetails(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Country with code " + code + " not found"));
-        List<City> cities = country.getCities();
-        List<CountryLanguage> languages = country.getLanguages();
+        Set<City> cities = country.getCities();
+        Set<CountryLanguage> languages = country.getLanguages();
         List<CityDto> cityDtos = new ArrayList<>();
         List<LanguageDto> languageDtos = new ArrayList<>();
         for (City city : cities) {

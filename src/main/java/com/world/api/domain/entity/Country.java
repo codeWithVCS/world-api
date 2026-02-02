@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "country")
@@ -60,8 +61,8 @@ public class Country {
     private String code2;
 
     @OneToMany(mappedBy = "country")
-    private List<City> cities;
+    private Set<City> cities;
 
     @OneToMany(mappedBy = "country")
-    private List<CountryLanguage> languages;
+    private Set<CountryLanguage> languages;
 }
