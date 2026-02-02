@@ -12,6 +12,7 @@ import com.world.api.web.dto.CountrySummaryDto;
 import com.world.api.web.dto.LanguageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +24,7 @@ public class WorldServiceImpl implements WorldService {
     private final CountryRepository countryRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public List<CountrySummaryDto> getAllCountries() {
         List<Country> countryList = countryRepository.findAll();
         List<CountrySummaryDto> responses = new ArrayList<>();
@@ -39,6 +41,7 @@ public class WorldServiceImpl implements WorldService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public CountryResponseDto getCountryByCode(String code) {
         Country country = countryRepository.findByCodeWithDetails(code)
                 .orElseThrow(() -> new ResourceNotFoundException("Country with code " + code + " not found"));
