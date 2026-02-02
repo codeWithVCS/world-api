@@ -19,5 +19,11 @@ public interface CountryRepository extends JpaRepository<Country, String> {
             "WHERE c.code = :code")
     Optional<Country> findByCodeWithDetails(@Param("code") String code);
 
+    List<Country> findByNameContainingIgnoreCase(String name);
+
     List<Country> findByContinent(Continent continent);
+
+    @Query("SELECT c FROM Country c JOIN c.cities city WHERE city.id = :cityId")
+    Optional<Country> findByCityId(@Param("cityId") Integer cityId);
+
 }
