@@ -1,6 +1,7 @@
 package com.world.api.domain.entity;
 
 import com.world.api.domain.enums.Continent;
+import com.world.api.domain.enums.ContinentConverter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,8 +19,8 @@ public class Country {
     @Column(name = "Name", nullable = false, columnDefinition = "char(52)")
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Continent", nullable = false)
+    @Convert(converter = ContinentConverter.class)
+    @Column(name = "Continent", nullable = false, columnDefinition = "enum('Asia','Europe','North America','Africa','Oceania','Antarctica','South America')")
     private Continent continent;
 
     @Column(name = "Region", nullable = false, columnDefinition = "char(26)")
