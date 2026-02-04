@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: world-api-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: world
+      MYSQL_USER: worlduser
+      MYSQL_PASSWORD: worldpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      # Persist database data
+      - mysql_data:/var/lib/mysql
+      # Initialize with world database dump
+      - ./init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - world-api-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # Spring Boot Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: world-api-app
+    environment:
+      # Database connection
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/world
+      DB_USER: worlduser
+      DB_PASSWORD: worldpassword
+      # Optional: Set Spring profile
+      SPRING_PROFILES_ACTIVE: dev
+      # JVM options (optional override)
+      JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - world-api-network
+    # Restart policy
+    restart: unless-stopped
+
+networks:
+  world-api-network:
+    driver: bridge
+
+volumes:
+  mysql_data:
+    driver: local
